@@ -56,7 +56,7 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             ) : (
               <Link
-                href="/login"
+                href="/settings"
                 className="text-sm text-nebula-400 hover:text-nebula-300"
               >
                 Login

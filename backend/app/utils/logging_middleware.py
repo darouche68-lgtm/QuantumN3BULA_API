@@ -2,7 +2,7 @@
 
 import logging
 import time
-from datetime import datetime, timezone
+import uuid
 from typing import Callable
 
 from fastapi import Request, Response
@@ -17,7 +17,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Process the request and log details."""
         start_time = time.time()
-        request_id = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        request_id = str(uuid.uuid4())
 
         # Log request
         logger.info(

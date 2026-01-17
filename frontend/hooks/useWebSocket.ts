@@ -4,16 +4,24 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
+import type { Task, Log } from '@/lib/api';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws';
 
-interface WebSocketMessage {
-  event: string;
-  task_id?: number;
+interface TaskUpdateMessage {
+  event: 'task_started' | 'task_completed' | 'task_failed';
+  task_id: number;
   status?: string;
   result?: string;
-  [key: string]: unknown;
 }
+
+interface LogMessage extends Omit<Log, 'id' | 'created_at'> {
+  event: 'log';
+  id?: number;
+  created_at?: string;
+}
+
+type WebSocketMessage = TaskUpdateMessage | LogMessage | { event: string; [key: string]: unknown };
 
 export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);
@@ -39,21 +47,30 @@ export function useWebSocket() {
           setLastEvent(data);
 
           // Handle different event types
-          switch (data.event) {
-            case 'task_started':
-            case 'task_completed':
-            case 'task_failed':
-              if (data.task_id) {
-                updateTask({
-                  id: data.task_id,
-                  status: data.status || 'unknown',
-                  result: data.result || null,
-                } as never);
-              }
-              break;
-            case 'log':
-              addLog(data as never);
-              break;
+          if (data.event === 'task_started' || data.event === 'task_completed' || data.event === 'task_failed') {
+            const taskMsg = data as TaskUpdateMessage;
+            if (taskMsg.task_id) {
+              // Create a partial task update with required fields
+              const partialUpdate: Partial<Task> & { id: number } = {
+                id: taskMsg.task_id,
+                status: taskMsg.status || 'unknown',
+                result: taskMsg.result ?? null,
+              };
+              updateTask(partialUpdate as Task);
+            }
+          } else if (data.event === 'log') {
+            const logMsg = data as LogMessage;
+            // Create a log entry with default values for missing fields
+            const logEntry: Log = {
+              id: logMsg.id || Date.now(),
+              level: logMsg.level,
+              message: logMsg.message,
+              source: logMsg.source ?? null,
+              task_id: logMsg.task_id ?? null,
+              agent_id: logMsg.agent_id ?? null,
+              created_at: logMsg.created_at || new Date().toISOString(),
+            };
+            addLog(logEntry);
           }
         } catch (err) {
           console.error('Failed to parse WebSocket message:', err);

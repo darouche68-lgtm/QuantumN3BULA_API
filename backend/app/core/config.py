@@ -1,8 +1,24 @@
 """Application configuration."""
 
 import os
+import secrets
+import warnings
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _get_secret_key() -> str:
+    """Get secret key from environment or generate a warning."""
+    key = os.getenv("SECRET_KEY")
+    if not key:
+        warnings.warn(
+            "SECRET_KEY not set! Using a random key. "
+            "Set SECRET_KEY environment variable in production.",
+            UserWarning,
+            stacklevel=2,
+        )
+        return secrets.token_urlsafe(32)
+    return key
 
 
 class Settings(BaseSettings):
@@ -21,7 +37,7 @@ class Settings(BaseSettings):
     )
 
     # JWT Auth
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "quantum-nebula-secret-key-change-in-production")
+    SECRET_KEY: str = _get_secret_key()
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
