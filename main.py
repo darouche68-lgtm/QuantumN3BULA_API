@@ -4,6 +4,7 @@ Quantum-N3BULA API - A FastAPI-based microservice
 
 from datetime import datetime
 from typing import List, Optional
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi import status as http_status
 from fastapi.responses import JSONResponse
@@ -23,18 +24,34 @@ APP_NAME = "Quantum-N3BULA API"
 VERSION = "1.0.0"
 DESCRIPTION = "A FastAPI-based microservice for quantum operations"
 
+# In-memory log storage
+log_storage: List[dict] = []
+MAX_LOGS = 1000
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for startup and shutdown events
+    """
+    # Startup
+    add_log("INFO", f"{APP_NAME} v{VERSION} started successfully")
+    logger.info(f"{APP_NAME} v{VERSION} is starting up...")
+    yield
+    # Shutdown
+    add_log("INFO", f"{APP_NAME} is shutting down")
+    logger.info(f"{APP_NAME} is shutting down...")
+
+
 # Create FastAPI app
 app = FastAPI(
     title=APP_NAME,
     version=VERSION,
     description=DESCRIPTION,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
-
-# In-memory log storage
-log_storage: List[dict] = []
-MAX_LOGS = 1000
 
 
 class ExecuteRequest(BaseModel):
@@ -76,20 +93,6 @@ def add_log(level: str, message: str, endpoint: Optional[str] = None):
     # Also log to the logger
     log_func = getattr(logger, level.lower(), logger.info)
     log_func(f"[{endpoint}] {message}" if endpoint else message)
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Execute on application startup"""
-    add_log("INFO", f"{APP_NAME} v{VERSION} started successfully")
-    logger.info(f"{APP_NAME} v{VERSION} is starting up...")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Execute on application shutdown"""
-    add_log("INFO", f"{APP_NAME} is shutting down")
-    logger.info(f"{APP_NAME} is shutting down...")
 
 
 @app.get("/ping", tags=["Health"])
