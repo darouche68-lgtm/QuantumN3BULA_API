@@ -1,9 +1,9 @@
 """Task model for execution tracking."""
 
+import enum
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, Enum
-import enum
+from sqlalchemy import Column, DateTime, Integer, String, Text
 
 from app.core.database import Base
 

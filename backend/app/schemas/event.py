@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class EventCreate(BaseModel):
@@ -19,6 +19,8 @@ class EventCreate(BaseModel):
 class EventResponse(BaseModel):
     """Schema for event response."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     event_type: str
     payload: dict[str, Any] | None = None
@@ -26,8 +28,3 @@ class EventResponse(BaseModel):
     task_id: int | None = None
     agent_id: int | None = None
     created_at: datetime
-
-    class Config:
-        """Pydantic configuration."""
-
-        from_attributes = True

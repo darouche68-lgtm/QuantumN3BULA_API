@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LogCreate(BaseModel):
@@ -18,6 +18,8 @@ class LogCreate(BaseModel):
 class LogResponse(BaseModel):
     """Schema for log response."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     level: str
     message: str
@@ -25,8 +27,3 @@ class LogResponse(BaseModel):
     task_id: int | None = None
     agent_id: int | None = None
     created_at: datetime
-
-    class Config:
-        """Pydantic configuration."""
-
-        from_attributes = True

@@ -2,9 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel
-
-from app.models.task import TaskStatus
+from pydantic import BaseModel, ConfigDict
 
 
 class TaskCreate(BaseModel):
@@ -25,6 +23,8 @@ class TaskExecute(BaseModel):
 class TaskResponse(BaseModel):
     """Schema for task response."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
     command: str
@@ -35,8 +35,3 @@ class TaskResponse(BaseModel):
     created_at: datetime
     started_at: datetime | None = None
     completed_at: datetime | None = None
-
-    class Config:
-        """Pydantic configuration."""
-
-        from_attributes = True

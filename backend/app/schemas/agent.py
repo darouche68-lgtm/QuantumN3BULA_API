@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AgentCreate(BaseModel):
@@ -15,6 +15,8 @@ class AgentCreate(BaseModel):
 class AgentResponse(BaseModel):
     """Schema for agent response."""
 
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
     description: str | None = None
@@ -23,8 +25,3 @@ class AgentResponse(BaseModel):
     last_heartbeat: datetime | None = None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        """Pydantic configuration."""
-
-        from_attributes = True

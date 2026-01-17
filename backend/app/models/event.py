@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, JSON
+from sqlalchemy import JSON, Column, DateTime, Integer, String
 
 from app.core.database import Base
 

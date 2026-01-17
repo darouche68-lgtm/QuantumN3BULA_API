@@ -1,7 +1,7 @@
 """Logging middleware for request/response logging."""
 
-import time
 import logging
+import time
 from datetime import datetime, timezone
 from typing import Callable
 

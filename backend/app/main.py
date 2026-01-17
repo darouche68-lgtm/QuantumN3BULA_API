@@ -5,10 +5,10 @@ import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
-from app.core.database import engine, Base
 from app.api import api_router
-from app.utils import manager, LoggingMiddleware
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.utils import LoggingMiddleware, manager
 
 # Configure logging
 logging.basicConfig(
