@@ -4,7 +4,8 @@ Quantum-N3BULA API - A FastAPI-based microservice
 
 from datetime import datetime
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException
+from fastapi import status as http_status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import logging
@@ -143,7 +144,7 @@ async def execute(request: ExecuteRequest):
         if not request.command or not request.command.strip():
             add_log("ERROR", "Empty command provided", "/execute")
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=http_status.HTTP_400_BAD_REQUEST,
                 detail="Command cannot be empty"
             )
         
@@ -169,7 +170,7 @@ async def execute(request: ExecuteRequest):
         error_msg = f"Error executing command: {str(e)}"
         add_log("ERROR", error_msg, "/execute")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=error_msg
         )
 
@@ -228,7 +229,7 @@ async def global_exception_handler(request, exc):
     error_msg = f"Unhandled exception: {str(exc)}"
     add_log("ERROR", error_msg)
     return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Internal server error", "error": str(exc)}
     )
 
