@@ -17,6 +17,8 @@ jobs:
   backend-test:
     name: Backend - Lint & Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: ./backend
@@ -48,6 +50,8 @@ jobs:
   frontend-test:
     name: Frontend - Lint & Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: ./frontend
@@ -76,6 +80,9 @@ jobs:
   docker-build:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: [backend-test, frontend-test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
