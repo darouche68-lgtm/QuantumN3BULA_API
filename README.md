@@ -173,9 +173,10 @@ Configure these secrets in your GitHub repository:
 ## Technology Stack
 
 - **Python**: 3.11
-- **Framework**: FastAPI 0.109.0
+- **Framework**: FastAPI 0.109.1 (security-patched)
 - **ASGI Server**: Uvicorn 0.27.0
 - **Validation**: Pydantic 2.5.3
+- **File Upload**: python-multipart 0.0.18 (security-patched)
 - **Container**: Docker
 - **CI/CD**: GitHub Actions
 
