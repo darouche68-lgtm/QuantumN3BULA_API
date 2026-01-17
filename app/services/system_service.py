@@ -63,17 +63,52 @@ async def execute_command(command: str, parameters: dict[str, Any] | None = None
             "processor": platform.processor() or "unknown"
         }
     elif command.lower() == "calculate":
-        # Simple calculation simulation
+        # Simple calculation simulation using ast.literal_eval for safety
         if parameters and "expression" in parameters:
             try:
+                import ast
+                import operator
+                
                 # Only allow safe numeric operations
-                expr = parameters["expression"]
-                if all(c in "0123456789+-*/.() " for c in str(expr)):
-                    result = eval(expr)  # Safe: only numeric chars allowed
-                else:
-                    result = "Invalid expression"
-                    status = "error"
-            except (SyntaxError, TypeError, ZeroDivisionError) as e:
+                expr = str(parameters["expression"])
+                
+                # Define allowed operators
+                ops = {
+                    ast.Add: operator.add,
+                    ast.Sub: operator.sub,
+                    ast.Mult: operator.mul,
+                    ast.Div: operator.truediv,
+                    ast.USub: operator.neg,
+                    ast.UAdd: operator.pos
+                }
+                
+                def safe_eval(node):
+                    """Safely evaluate a math expression AST node."""
+                    if isinstance(node, ast.Constant):  # Numbers
+                        if isinstance(node.value, (int, float)):
+                            return node.value
+                        raise ValueError("Only numeric constants allowed")
+                    elif isinstance(node, ast.BinOp):  # Binary operations
+                        left = safe_eval(node.left)
+                        right = safe_eval(node.right)
+                        op_type = type(node.op)
+                        if op_type in ops:
+                            return ops[op_type](left, right)
+                        raise ValueError(f"Unsupported operator: {op_type}")
+                    elif isinstance(node, ast.UnaryOp):  # Unary operations
+                        operand = safe_eval(node.operand)
+                        op_type = type(node.op)
+                        if op_type in ops:
+                            return ops[op_type](operand)
+                        raise ValueError(f"Unsupported unary operator: {op_type}")
+                    elif isinstance(node, ast.Expression):
+                        return safe_eval(node.body)
+                    else:
+                        raise ValueError(f"Unsupported node type: {type(node)}")
+                
+                tree = ast.parse(expr, mode='eval')
+                result = safe_eval(tree)
+            except (SyntaxError, TypeError, ZeroDivisionError, ValueError) as e:
                 result = f"Calculation error: {str(e)}"
                 status = "error"
         else:

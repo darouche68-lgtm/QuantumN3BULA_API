@@ -3,7 +3,7 @@
 A production-ready FastAPI microservice for quantum operations simulation.
 
 ![Python](https://img.shields.io/badge/python-3.11-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-green)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109.1-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Features
