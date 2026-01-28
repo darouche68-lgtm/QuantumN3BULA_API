@@ -99,8 +99,11 @@ export const statusApi = {
 // Tasks API
 export const tasksApi = {
   list: (params?: { skip?: number; limit?: number }) => {
+    const filteredParams = params
+      ? Object.entries(params).filter(([_, v]) => v !== undefined)
+      : [];
     const query = new URLSearchParams(
-      params ? (Object.entries(params).map(([k, v]) => [k, String(v)]) as [string, string][]) : []
+      filteredParams.map(([k, v]) => [k, String(v)]) as [string, string][]
     ).toString();
     return fetchAPI<Task[]>(`/api/tasks${query ? `?${query}` : ''}`);
   },
@@ -122,8 +125,11 @@ export const tasksApi = {
 // Logs API
 export const logsApi = {
   list: (params?: { skip?: number; limit?: number; level?: string }) => {
+    const filteredParams = params
+      ? Object.entries(params).filter(([_, v]) => v !== undefined)
+      : [];
     const query = new URLSearchParams(
-      params ? (Object.entries(params).map(([k, v]) => [k, String(v)]) as [string, string][]) : []
+      filteredParams.map(([k, v]) => [k, String(v)]) as [string, string][]
     ).toString();
     return fetchAPI<Log[]>(`/api/logs${query ? `?${query}` : ''}`);
   },
@@ -133,8 +139,11 @@ export const logsApi = {
 // Agents API
 export const agentsApi = {
   list: (params?: { skip?: number; limit?: number }) => {
+    const filteredParams = params
+      ? Object.entries(params).filter(([_, v]) => v !== undefined)
+      : [];
     const query = new URLSearchParams(
-      params ? (Object.entries(params).map(([k, v]) => [k, String(v)]) as [string, string][]) : []
+      filteredParams.map(([k, v]) => [k, String(v)]) as [string, string][]
     ).toString();
     return fetchAPI<Agent[]>(`/api/agents${query ? `?${query}` : ''}`);
   },
