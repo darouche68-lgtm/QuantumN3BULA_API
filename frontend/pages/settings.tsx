@@ -35,7 +35,11 @@ export default function SettingsPage() {
         loginData.username,
         loginData.password
       );
-      const userInfo = await authApi.getMe(access_token);
+      // Set token in localStorage first so authApi.me() can use it
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', access_token);
+      }
+      const userInfo = await authApi.me();
       setAuth(access_token, userInfo);
       setLoginData({ username: '', password: '' });
     } catch (err) {
@@ -57,7 +61,11 @@ export default function SettingsPage() {
         registerData.username,
         registerData.password
       );
-      const userInfo = await authApi.getMe(access_token);
+      // Set token in localStorage first so authApi.me() can use it
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', access_token);
+      }
+      const userInfo = await authApi.me();
       setAuth(access_token, userInfo);
       setRegisterData({ username: '', email: '', password: '' });
       setShowRegister(false);

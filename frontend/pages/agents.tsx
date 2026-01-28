@@ -36,7 +36,7 @@ export default function AgentsPage() {
 
     setIsCreating(true);
     try {
-      const agent = await agentsApi.create(newAgent, token);
+      const agent = await agentsApi.create(newAgent);
       addAgent(agent);
       setNewAgent({ name: '', description: '' });
       setShowCreateForm(false);
@@ -53,7 +53,7 @@ export default function AgentsPage() {
     if (!confirm('Are you sure you want to delete this agent?')) return;
 
     try {
-      await agentsApi.delete(id, token);
+      await agentsApi.delete(id);
       removeAgent(id);
     } catch (error) {
       console.error('Failed to delete agent:', error);

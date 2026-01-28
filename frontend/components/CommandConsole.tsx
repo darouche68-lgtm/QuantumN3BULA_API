@@ -37,7 +37,7 @@ export default function CommandConsole() {
     setIsLoading(true);
 
     try {
-      const task: Task = await tasksApi.execute(command, token);
+      const task: Task = await tasksApi.execute({ command });
       addTask(task);
       addOutput('response', `Task ${task.id} created: ${task.status}`);
     } catch (err) {
