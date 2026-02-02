@@ -21,7 +21,7 @@ interface AppState {
   tasks: Task[];
   setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
-  updateTask: (task: Task) => void;
+  updateTask: (task: Partial<Task> & { id: number }) => void;
 
   // Logs
   logs: Log[];

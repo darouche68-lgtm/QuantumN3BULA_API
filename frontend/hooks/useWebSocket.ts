@@ -50,13 +50,12 @@ export function useWebSocket() {
           if (data.event === 'task_started' || data.event === 'task_completed' || data.event === 'task_failed') {
             const taskMsg = data as TaskUpdateMessage;
             if (taskMsg.task_id) {
-              // Create a partial task update with required fields
-              const partialUpdate: Partial<Task> & { id: number } = {
+              // Create a partial task update - store will merge with existing task
+              updateTask({
                 id: taskMsg.task_id,
                 status: taskMsg.status || 'unknown',
                 result: taskMsg.result ?? null,
-              };
-              updateTask(partialUpdate as Task);
+              });
             }
           } else if (data.event === 'log') {
             const logMsg = data as LogMessage;

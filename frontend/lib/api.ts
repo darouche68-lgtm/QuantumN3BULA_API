@@ -132,11 +132,25 @@ export const agentsApi = {
 
 // Auth API
 export const authApi = {
-  login: (username: string, password: string): Promise<LoginResponse> =>
-    apiRequest('/auth/login', {
+  login: (username: string, password: string): Promise<LoginResponse> => {
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+
+    return fetch(`${API_URL}/auth/token`, {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
-    }),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    }).then(async (response) => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP ${response.status}`);
+      }
+      return response.json();
+    });
+  },
 
   register: (data: {
     username: string;
