@@ -132,6 +132,8 @@ export const agentsApi = {
 
 // Auth API
 export const authApi = {
+  // Note: login uses form-urlencoded data (OAuth2 standard) instead of JSON,
+  // so we use a direct fetch call rather than the apiRequest helper
   login: (username: string, password: string): Promise<LoginResponse> => {
     const formData = new URLSearchParams();
     formData.append('username', username);
